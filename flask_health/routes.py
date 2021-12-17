@@ -1,17 +1,23 @@
 from flask import jsonify, render_template
 
-from flask_health import app
 
+"""
+health check, common blueprint
+    from config flask
+"""
 
-@app.route('/')
-def hello():
-    return 'Hello, World!'
-
-
-@app.route('/health')
-def health():
-    response = {"status": "ok"}
-    return jsonify(response)
+# from
+#
+#
+# @app.route('/')
+# def hello():
+#     return 'Hello, World!'
+#
+#
+# @app.route('/health')
+# def health():
+#     response = {"status": "ok"}
+#     return jsonify(response)
 
 
 """
