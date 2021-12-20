@@ -5,13 +5,9 @@ from flask import jsonify, render_template
     
     from config flask
     
-    patients and hospitals packages with blueprint
-    
     models with schemas
     
     views with logic
-    
-    if use url_for, then in redirect dont forget to specify package url_for(post.post)
 """
 
 # @app.route('/')

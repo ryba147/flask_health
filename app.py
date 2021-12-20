@@ -2,7 +2,7 @@ from flask import Flask
 from flask_health.patient.routes import patient_bp
 from flask_health.hospital.routes import hospital_bp
 
-app = Flask(__name__)
+app = Flask(__name__)  # print(app.config)
 # app.config['SECRET_KEY'] = 'super-secret'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
