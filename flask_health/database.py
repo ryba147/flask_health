@@ -6,11 +6,13 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 # SQLALCHEMY_DATABASE_URI = 'sqlite:///site.db'
 
-os.environ['db_url'] = 'postgresql://postgres:pgnulp@localhost:5432/flask_health_db'
+os.environ['db_url'] = 'postgresql://postgres:newpassword@localhost:5432/flask_health_db'
 SQLALCHEMY_DATABASE_URI = os.environ['db_url']  # ubuntu psql users
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
-db_session = scoped_session(sessionmaker)
+db_session = scoped_session(sessionmaker(autocommit=False,
+                                         autoflush=False,
+                                         bind=engine))
 
 Base = declarative_base()
 

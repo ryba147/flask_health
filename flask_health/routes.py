@@ -1,21 +1,19 @@
-from flask import jsonify, render_template
+from flask import Blueprint, jsonify
 
 """
-    health check, common blueprint
+    health check
     
-    from config flask
+    from config flask [+-]
     
     models with schemas
     
     views with logic
 """
 
-# @app.route('/')
-# def hello():
-#     return 'Hello, World!'
-#
-#
-# @app.route('/health')
-# def health():
-#     response = {"status": "ok"}
-#     return jsonify(response)
+common_bp = Blueprint('common_bp', __name__)
+
+
+@common_bp.route('/')
+def home():
+    response = {"status": "ok"}
+    return jsonify(response)

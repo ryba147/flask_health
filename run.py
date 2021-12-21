@@ -1,4 +1,4 @@
-from app import app  # imports from __init__.py file within the package
+from app import app
 
 if __name__ == '__main__':
     app.run(debug=True)

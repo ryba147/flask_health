@@ -3,14 +3,6 @@ from sqlalchemy.orm import relationship, backref
 
 from flask_health.database import Base
 
-# class GenderEnum(enum.Enum):
-#     pass
-
-# class methods?, dialects psql, init_db, __init__?
-
-# nullable=False works only for CREATE TABLE
-from flask_health.hospital.models import Hospital
-
 
 class PatientHospital(Base):
     __tablename__ = 'PatientHospital'
@@ -31,7 +23,8 @@ class Patient(Base):
     gender = Column(Enum('female', 'male', name='gender_enum', create_type=False))
     email = Column(String(64))
     phone_num = Column(String(32))
-    hospitals = relationship('Hospital', secondary=PatientHospital, backref='patients')
+
+    # hospitals = relationship('Hospital', secondary=PatientHospital, backref='patients')
 
     # medical_card_id = relationship('MedicalCard', backref=backref('MedicalCard', uselist=False))  # ??????? or fk
 
