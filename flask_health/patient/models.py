@@ -13,8 +13,7 @@ class Patient(Base):
     gender = Column(Enum('female', 'male', name='gender_enum', create_type=False))
     email = Column(String(64))
     phone_num = Column(String(32))
-
-    # hospitals = relationship('Hospital', secondary=PatientHospital, backref='patients')
+    # hospitals = relationship('Hospital', secondary='PatientHospital', backref='patients')
 
     # medical_card_id = relationship('MedicalCard', backref=backref('MedicalCard', uselist=False))  # ??????? or fk
 

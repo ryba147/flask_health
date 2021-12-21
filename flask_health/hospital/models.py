@@ -13,4 +13,4 @@ class Hospital(Base):
     name = Column(String(128))
     description = Column(String)
     address = Column(String(512))
-    # patients = relationship('Patient', secondary=PatientHospital, backref='hospitals')
+    patients = relationship('Patient', secondary='PatientHospital', backref='hospitals')
