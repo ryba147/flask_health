@@ -1,17 +1,7 @@
-from sqlalchemy import Integer, Column, String, Enum, Float, DateTime, ForeignKey
+from sqlalchemy import Integer, Column, String, Enum, Float, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, backref
 
 from flask_health.database import Base
-
-
-class PatientHospital(Base):
-    __tablename__ = 'PatientHospital'
-
-    # unique (patient_id, hospital_id)
-    # https://newbedev.com/sqlalchemy-unique-across-multiple-columns
-    id = Column(Integer, primary_key=True)
-    patient_id = Column(Integer, ForeignKey('Patient.id'), nullable=False, unique=True)  # trouble
-    hospital_id = Column(Integer, ForeignKey('Hospital.id'), nullable=False, unique=True)
 
 
 class Patient(Base):
@@ -30,6 +20,17 @@ class Patient(Base):
 
     def __repr__(self):
         return f'<User(name={self.first_name}, last_name={self.last_name})>'
+
+
+class PatientHospital(Base):
+    __tablename__ = 'PatientHospital'
+    __table_args__ = (
+        UniqueConstraint('patient_id', 'hospital_id', name='PatientHospital_patient_id_hospital_id_uc'),
+    )
+
+    id = Column(Integer, primary_key=True)
+    patient_id = Column(Integer, ForeignKey('Patient.id'), nullable=False)  # nullable=True only when CREATE TABLE
+    hospital_id = Column(Integer, ForeignKey('Hospital.id'), nullable=False)
 
 
 class MedicalCard(Base):
