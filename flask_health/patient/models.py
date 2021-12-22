@@ -13,9 +13,9 @@ class Patient(Base):
     gender = Column(Enum('female', 'male', name='gender_enum', create_type=False))
     email = Column(String(64))
     phone_num = Column(String(32))
-    # hospitals = relationship('Hospital', secondary='PatientHospital', backref='patients')
+    medical_card_id = relationship('MedicalCard', backref=backref('MedicalCard', uselist=False))  # back_populates ?
 
-    # medical_card_id = relationship('MedicalCard', backref=backref('MedicalCard', uselist=False))  # ??????? or fk
+    # hospitals = relationship('Hospital', secondary='PatientHospital', backref='patients')
 
     def __repr__(self):
         return f'<User(name={self.first_name}, last_name={self.last_name})>'
@@ -36,6 +36,7 @@ class MedicalCard(Base):
     __tablename__ = 'MedicalCard'
 
     id = Column(Integer, primary_key=True)
+    patient_id = Column(Integer, ForeignKey('Patient.id'), nullable=False)
     medical_conditions = Column(String)
     allergies_reactions = Column(String)
     birth_date = Column(DateTime)
