@@ -6,6 +6,14 @@ from flask_health.hospital.schemas import HospitalSchema
 
 hospital_bp = Blueprint('hospital_bp', __name__, url_prefix='/hospital')
 
+"""
+CRUD
+
+get by id, list
+
+REST, API design
+"""
+
 
 @hospital_bp.route('/')
 def hello():
