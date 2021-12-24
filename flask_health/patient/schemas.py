@@ -2,7 +2,7 @@ from marshmallow import Schema, fields
 
 
 class PatientSchema(Schema):
-    id = fields.Integer()  # dump_only=True
+    id = fields.Integer(allow_none=True)  # dump_only=True
     first_name = fields.Str()
     last_name = fields.Str()
     gender = fields.Str()
@@ -12,7 +12,7 @@ class PatientSchema(Schema):
 
 
 class MedicalCardSchema(Schema):
-    id = fields.Integer()
+    id = fields.Integer(allow_none=True)
     patient_id = fields.Integer()
     medical_conditions = fields.Str()
     allergies_reactions = fields.Str()

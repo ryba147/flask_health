@@ -17,7 +17,7 @@ def home():
     return res
 
 
-@patient_bp.route('/medical_card')
+@patient_bp.route('/medical_card/', methods=['GET'])
 def patient_medical_card():
     mc = db_session.query(MedicalCard).first()
 
