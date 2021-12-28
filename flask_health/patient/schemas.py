@@ -13,7 +13,7 @@ class PatientSchema(Schema):
 
 class MedicalCardSchema(Schema):
     id = fields.Integer(allow_none=True)
-    patient_id = fields.Integer()
+    patient_id = fields.Integer(can_update=False)
     medical_conditions = fields.Str()
     allergies_reactions = fields.Str()
     birth_date = fields.Date()

@@ -35,6 +35,7 @@ class Patient(Base):
         else:
             patients = db_session.query(cls)
 
+        # filter(**filter_options)
         if blood_type is not None:
             patients = patients.filter(MedicalCard.blood_type == blood_type)
         if gender is not None:
@@ -59,15 +60,6 @@ class Patient(Base):
         return patient
 
     @classmethod
-    def delete(cls, patient) -> None:
-        try:
-            db_session.delete(patient)
-            db_session.commit()
-        except DatabaseError:
-            db_session.rollback()
-            raise
-
-    @classmethod
     def update(cls, id: int, json_data: Dict) -> Optional['Patient']:
         db_session.query(cls).filter_by(id=id).update(json_data)
         db_session.commit()
@@ -75,6 +67,15 @@ class Patient(Base):
         res = cls.get_by_id(id)
 
         return res
+
+    @classmethod
+    def delete(cls, patient) -> None:
+        try:
+            db_session.delete(patient)
+            db_session.commit()
+        except DatabaseError:
+            db_session.rollback()
+            raise
 
 
 class PatientHospital(Base):
@@ -121,6 +122,15 @@ class MedicalCard(Base):
             raise
 
         return medical_card
+
+    @classmethod
+    def update(cls, patient_id: int, json_data: Dict) -> Optional['MedicalCard']:
+        db_session.query(cls).filter_by(patient_id=patient_id).update(json_data)
+        db_session.commit()
+
+        res = cls.get_by_patient_id(patient_id)
+
+        return res
 
     @classmethod
     def delete(cls, medical_card) -> None:

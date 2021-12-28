@@ -114,6 +114,25 @@ def add_medical_card():
     return res, HTTPStatus.CREATED
 
 
+@patient_bp.route('/<int:patient_id>/medical_card/', methods=['PUT'])
+def update_medical_card(patient_id):
+    if not MedicalCard.get_by_patient_id(patient_id):
+        return {'message': 'Patient not found'}, HTTPStatus.NOT_FOUND
+
+    json_data = request.get_json(silent=False)
+
+    try:
+        MedicalCardSchema().load(json_data)
+        medical_card = MedicalCard.update(patient_id, json_data)
+    except ValidationError as err:
+        return err.messages, HTTPStatus.BAD_REQUEST
+
+    mc_schema = MedicalCardSchema()
+    res = mc_schema.dump(medical_card)
+
+    return res, HTTPStatus.OK
+
+
 @patient_bp.route('/<int:patient_id>/medical_card/', methods=['DELETE'])
 def delete_patient_medical_card(patient_id):
     medical_card = MedicalCard.get_by_patient_id(patient_id)
