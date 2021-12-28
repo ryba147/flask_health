@@ -1,8 +1,12 @@
+from typing import Optional, Dict, List
+
 from sqlalchemy import Integer, Column, String, Enum, Float, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy.exc import IntegrityError, DatabaseError
 from sqlalchemy.orm import relationship, backref
 
 from flask_health.constants import GenderEnum, BloodTypeEnum, RhesusFactorEnum
-from flask_health.database import Base
+from flask_health.database import Base, db_session
+from flask_health.patient.schemas import PatientSchema
 
 
 class Patient(Base):
@@ -19,6 +23,44 @@ class Patient(Base):
 
     def __repr__(self):
         return f'<User(name={self.first_name}, last_name={self.last_name})>'
+
+    @classmethod
+    def add(cls, json_data: Dict) -> Optional['Patient']:
+        patient = Patient(**json_data)
+        try:
+            db_session.add(patient)
+            db_session.commit()
+        except DatabaseError:
+            db_session.rollback()
+            raise
+
+        return patient
+
+    @classmethod
+    def delete(cls, patient) -> None:
+        try:
+            db_session.delete(patient)
+            db_session.commit()
+        except DatabaseError:
+            db_session.rollback()
+            raise
+
+    @classmethod
+    def update(cls, id: int, json_data: Dict) -> Optional['Patient']:
+        db_session.query(cls).filter_by(id=id).update(json_data)
+        db_session.commit()
+
+        res = cls.get_by_id(id)
+
+        return res
+
+    @classmethod
+    def get_all(cls) -> List[PatientSchema]:
+        return db_session.query(cls).all()
+
+    @classmethod
+    def get_by_id(cls, id: int) -> Optional['Patient']:
+        return db_session.query(cls).filter_by(id=id).one_or_none()
 
 
 class PatientHospital(Base):

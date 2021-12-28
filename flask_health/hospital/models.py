@@ -1,7 +1,7 @@
 from typing import Optional, List, Dict
 
 from sqlalchemy import Integer, Column, String, Enum
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DatabaseError
 from sqlalchemy.orm import relationship
 
 from flask_health.constants import HospitalTypeEnum
@@ -23,34 +23,30 @@ class Hospital(Base):
         return f'<Hospital(name={self.name}, description={self.description})>'
 
     @classmethod
-    def add_from_json(cls, json_data: Dict) -> Optional['Hospital']:
+    def add(cls, json_data: Dict) -> Optional['Hospital']:
         hospital = Hospital(**json_data)
         try:
             db_session.add(hospital)
             db_session.commit()
-        except IntegrityError:
+        except DatabaseError:
             db_session.rollback()
+            raise
 
         return hospital
-        # pass a dict, create an object. if error return None
 
     @classmethod
-    def delete(cls, hospital):  # ->
+    def delete(cls, hospital) -> None:
         try:
             db_session.delete(hospital)
             db_session.commit()
-        except IntegrityError:  # rollback and raise
+        except DatabaseError:
             db_session.rollback()
-            # rollback and raise. global exception handler
+            raise
 
     @classmethod
-    def update(cls, id: int, json_data: Dict) -> Optional['Hospital']:  # int from typing ??
-        # hospital.type = json_data.get('type', hospital.type)
-        # hospital.name = json_data.get('name', hospital.name)
-        # hospital.description = json_data.get('description', hospital.description)
-        # hospital.address = json_data.get('address', hospital.address)
+    def update(cls, id: int, json_data: Dict) -> Optional['Hospital']:
 
-        db_session.query(cls).filter_by(id=id).update(dict(json_data))
+        db_session.query(cls).filter_by(id=id).update(json_data)
         db_session.commit()
 
         res = cls.get_by_id(id)
@@ -62,5 +58,5 @@ class Hospital(Base):
         return db_session.query(cls).all()
 
     @classmethod
-    def get_by_id(cls, id: int) -> Optional['Hospital']:  # UUID?
+    def get_by_id(cls, id: int) -> Optional['Hospital']:
         return db_session.query(cls).filter_by(id=id).one_or_none()
