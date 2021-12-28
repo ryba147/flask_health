@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship, backref
 
 from flask_health.constants import GenderEnum, BloodTypeEnum, RhesusFactorEnum
 from flask_health.database import Base, db_session
-from flask_health.patient.schemas import PatientSchema, MedicalCardSchema
+from flask_health.patient.schemas import PatientSchema
 
 
 class Patient(Base):
