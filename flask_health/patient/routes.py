@@ -11,8 +11,9 @@ patient_bp = Blueprint('patient_bp', __name__, url_prefix='/patient')
 
 @patient_bp.route('/', methods=['GET'])
 def get_patient_list():
-    # query params filters. filter_by. 2-3
-    patients = Patient.get_all()
+    filter_options = request.args  # .to_dict()
+
+    patients = Patient.get_all(filter_options)
     patient_schema = PatientSchema(many=True)
     res = patient_schema.dump(patients)
     return jsonify(res), HTTPStatus.OK
@@ -80,6 +81,10 @@ def delete_patient(patient_id):
 # /medical_card/?patient_id=1
 @patient_bp.route('/<int:patient_id>/medical_card/', methods=['GET'])
 def get_patient_medical_card(patient_id):
+    # check if patient exists ?
+    if Patient.get_by_id(patient_id) is None:
+        return {'message': 'Patient not found'}, HTTPStatus.NOT_FOUND
+
     medical_card = MedicalCard.get_by_patient_id(patient_id)
 
     if medical_card is None:
@@ -111,7 +116,6 @@ def add_medical_card():
 
 @patient_bp.route('/<int:patient_id>/medical_card/', methods=['DELETE'])
 def delete_patient_medical_card(patient_id):
-    print('HERE')
     medical_card = MedicalCard.get_by_patient_id(patient_id)
 
     if medical_card is None:

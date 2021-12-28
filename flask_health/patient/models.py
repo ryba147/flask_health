@@ -25,6 +25,28 @@ class Patient(Base):
         return f'<User(name={self.first_name}, last_name={self.last_name})>'
 
     @classmethod
+    def get_all(cls, filter_options: Dict) -> List[PatientSchema]:
+
+        blood_type = filter_options.get('blood_type', None)
+        gender = filter_options.get('gender', None)
+
+        if filter_options:
+            patients = db_session.query(cls).join(MedicalCard, Patient.id == MedicalCard.patient_id)
+        else:
+            patients = db_session.query(cls)
+
+        if blood_type is not None:
+            patients = patients.filter(MedicalCard.blood_type == blood_type)
+        if gender is not None:
+            patients = patients.filter(Patient.gender == gender)
+
+        return patients.all()
+
+    @classmethod
+    def get_by_id(cls, id: int) -> Optional['Patient']:
+        return db_session.query(cls).filter_by(id=id).one_or_none()
+
+    @classmethod
     def add(cls, json_data: Dict) -> Optional['Patient']:
         patient = Patient(**json_data)
         try:
@@ -53,14 +75,6 @@ class Patient(Base):
         res = cls.get_by_id(id)
 
         return res
-
-    @classmethod
-    def get_all(cls) -> List[PatientSchema]:
-        return db_session.query(cls).all()
-
-    @classmethod
-    def get_by_id(cls, id: int) -> Optional['Patient']:
-        return db_session.query(cls).filter_by(id=id).one_or_none()
 
 
 class PatientHospital(Base):
