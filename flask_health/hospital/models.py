@@ -1,7 +1,7 @@
 from typing import Optional, List, Dict
 
 from sqlalchemy import Integer, Column, String, Enum
-from sqlalchemy.exc import IntegrityError, DatabaseError
+from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import relationship
 
 from flask_health.constants import HospitalTypeEnum

@@ -16,7 +16,7 @@ class MedicalCardSchema(Schema):
     patient_id = fields.Integer()
     medical_conditions = fields.Str()
     allergies_reactions = fields.Str()
-    birth_date = fields.DateTime()
+    birth_date = fields.Date()
     height = fields.Float()
     weight = fields.Float()
     blood_type = fields.Str()

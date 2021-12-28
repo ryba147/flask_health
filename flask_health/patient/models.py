@@ -1,12 +1,12 @@
 from typing import Optional, Dict, List
 
 from sqlalchemy import Integer, Column, String, Enum, Float, DateTime, ForeignKey, UniqueConstraint
-from sqlalchemy.exc import IntegrityError, DatabaseError
+from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import relationship, backref
 
 from flask_health.constants import GenderEnum, BloodTypeEnum, RhesusFactorEnum
 from flask_health.database import Base, db_session
-from flask_health.patient.schemas import PatientSchema
+from flask_health.patient.schemas import PatientSchema, MedicalCardSchema
 
 
 class Patient(Base):
@@ -78,9 +78,9 @@ class MedicalCard(Base):
     __tablename__ = 'MedicalCard'
 
     id = Column(Integer, primary_key=True)
-    patient_id = Column(Integer, ForeignKey('Patient.id'), nullable=False, unique=True)  # unique!
-    # works even without backref. medical_card.patient
-    patient = relationship('Patient', backref=backref('MedicalCard', uselist=False))
+    patient_id = Column(Integer, ForeignKey('Patient.id'), nullable=False, unique=True)
+    patient = relationship('Patient', backref=backref('MedicalCard',
+                                                      uselist=False))  # works even without backref. medical_card.patient
     medical_conditions = Column(String)
     allergies_reactions = Column(String)
     birth_date = Column(DateTime)
@@ -88,3 +88,31 @@ class MedicalCard(Base):
     weight = Column(Float)
     blood_type = Column(Enum(BloodTypeEnum))  # create_type in psql
     rh_factor = Column(Enum(RhesusFactorEnum))
+
+    def __repr__(self):
+        return f'<MedicalCard(patient_id={self.patient_id}, patient={self.patient})>'
+
+    @classmethod
+    def get_by_patient_id(cls, patient_id: int) -> Optional['MedicalCard']:
+        return db_session.query(cls).filter_by(patient_id=patient_id).one_or_none()
+
+    @classmethod
+    def add(cls, json_data: Dict) -> Optional['MedicalCard']:
+        medical_card = MedicalCard(**json_data)
+        try:
+            db_session.add(medical_card)
+            db_session.commit()
+        except DatabaseError:
+            db_session.rollback()
+            raise
+
+        return medical_card
+
+    @classmethod
+    def delete(cls, medical_card) -> None:
+        try:
+            db_session.delete(medical_card)
+            db_session.commit()
+        except DatabaseError:
+            db_session.rollback()
+            raise
