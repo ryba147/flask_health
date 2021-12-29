@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields
 from marshmallow.validate import OneOf
 
-from flask_health.constants import GenderEnum, BloodTypeEnum
+from flask_health.constants import GenderEnum, BloodTypeEnum, RhesusFactorEnum
 
 
 class PatientSchema(Schema):
@@ -17,6 +17,7 @@ class PatientSchema(Schema):
 class QueryFiltersSchema(Schema):
     gender = fields.Str(allow_none=True, validate=OneOf([e.value for e in GenderEnum]))
     blood_type = fields.Str(allow_none=True, validate=OneOf([e.value for e in BloodTypeEnum]))
+    rh_factor = fields.Str(allow_none=True, validate=OneOf([e.value for e in RhesusFactorEnum]))
 
 
 class MedicalCardSchema(Schema):

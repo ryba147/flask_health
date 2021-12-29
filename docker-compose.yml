@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/flask-health-docker
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=flask_health_dababase
+      - POSTGRES_USER=taras
+      - POSTGRES_PASSWORD=taras

@@ -26,12 +26,11 @@ class Patient(Base):
 
     @classmethod
     def get_all(cls, filters: Dict) -> List[PatientSchema]:
-        patients = db_session.query(cls)
+        patients = db_session.query(cls).outerjoin(MedicalCard, Patient.id == MedicalCard.patient_id)
 
         for attr, val in filters.items():
             if hasattr(MedicalCard, attr):  # i.e we have a blood_type
-                patients = patients.join(MedicalCard, Patient.id == MedicalCard.patient_id).filter(
-                    getattr(MedicalCard, attr) == val)
+                patients = patients.filter(getattr(MedicalCard, attr) == val)
 
             if hasattr(Patient, attr):  # i.e we have a gender
                 patients = patients.filter(getattr(Patient, attr) == val)
