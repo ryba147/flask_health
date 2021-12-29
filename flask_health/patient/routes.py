@@ -4,16 +4,22 @@ from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
 
 from flask_health.patient.models import Patient, MedicalCard
-from flask_health.patient.schemas import PatientSchema, MedicalCardSchema
+from flask_health.patient.schemas import PatientSchema, MedicalCardSchema, QueryFiltersSchema
 
 patient_bp = Blueprint('patient_bp', __name__, url_prefix='/patient')
 
 
 @patient_bp.route('/', methods=['GET'])
 def get_patient_list():
-    filter_options = request.args  # .to_dict()
+    filters = request.args
 
-    patients = Patient.get_all(filter_options)
+    # QueryFiltersSchema is it a correct name? check validate=OneOf([...]) in schemas.py
+    try:
+        QueryFiltersSchema().load(filters)
+    except ValidationError as err:
+        return err.messages, HTTPStatus.BAD_REQUEST
+
+    patients = Patient.get_all(filters)
     patient_schema = PatientSchema(many=True)
     res = patient_schema.dump(patients)
     return jsonify(res), HTTPStatus.OK
@@ -75,13 +81,11 @@ def delete_patient(patient_id):
 
     Patient.delete(patient)
 
-    return {'message': 'Patient deleted'}, HTTPStatus.NO_CONTENT  # 204
+    return {}, HTTPStatus.NO_CONTENT  # 204
 
 
-# /medical_card/?patient_id=1
 @patient_bp.route('/<int:patient_id>/medical_card/', methods=['GET'])
 def get_patient_medical_card(patient_id):
-    # check if patient exists ?
     if Patient.get_by_id(patient_id) is None:
         return {'message': 'Patient not found'}, HTTPStatus.NOT_FOUND
 
@@ -96,11 +100,13 @@ def get_patient_medical_card(patient_id):
     return res, HTTPStatus.OK
 
 
-@patient_bp.route('/medical_card/', methods=['POST'])
-def add_medical_card():
-    # check if patient already has a medical card ?
+@patient_bp.route('/<int:patient_id>/medical_card/', methods=['POST'])
+def add_medical_card(patient_id):
+    if MedicalCard.get_by_patient_id(patient_id):
+        return {'message': 'Patient already has a medical card'}, HTTPStatus.BAD_REQUEST
 
     json_data = request.get_json(silent=False)
+    json_data.update({"patient_id": patient_id})
 
     try:
         MedicalCardSchema().load(json_data)
@@ -142,4 +148,4 @@ def delete_patient_medical_card(patient_id):
 
     MedicalCard.delete(medical_card)
 
-    return {'message': 'Medical card deleted'}, HTTPStatus.NO_CONTENT
+    return {}, HTTPStatus.NO_CONTENT

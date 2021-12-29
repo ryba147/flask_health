@@ -35,6 +35,10 @@ class Patient(Base):
         else:
             patients = db_session.query(cls)
 
+        # for k, v in filter_options.items():
+        #     if hasattr(MedicalCard, k):
+        #         patients = patients.filter()
+
         # filter(**filter_options)
         if blood_type is not None:
             patients = patients.filter(MedicalCard.blood_type == blood_type)
