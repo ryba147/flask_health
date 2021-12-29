@@ -25,25 +25,18 @@ class Patient(Base):
         return f'<User(name={self.first_name}, last_name={self.last_name})>'
 
     @classmethod
-    def get_all(cls, filter_options: Dict) -> List[PatientSchema]:
+    def get_all(cls, filters: Dict) -> List[PatientSchema]:
+        patients = db_session.query(cls)
 
-        blood_type = filter_options.get('blood_type', None)
-        gender = filter_options.get('gender', None)
+        for attr, val in filters.items():
+            if hasattr(MedicalCard, attr):  # i.e we have a blood_type
+                print(f'MedicalCard has {attr} attribute')
+                patients = patients.join(MedicalCard, Patient.id == MedicalCard.patient_id).filter(
+                    getattr(MedicalCard, attr) == val)
 
-        if filter_options:
-            patients = db_session.query(cls).join(MedicalCard, Patient.id == MedicalCard.patient_id)
-        else:
-            patients = db_session.query(cls)
-
-        # for k, v in filter_options.items():
-        #     if hasattr(MedicalCard, k):
-        #         patients = patients.filter()
-
-        # filter(**filter_options)
-        if blood_type is not None:
-            patients = patients.filter(MedicalCard.blood_type == blood_type)
-        if gender is not None:
-            patients = patients.filter(Patient.gender == gender)
+            if hasattr(Patient, attr):  # i.e we have a gender
+                print(f'Patient has {attr} attribute')
+                patients = patients.filter(getattr(Patient, attr) == val)
 
         return patients.all()
 
