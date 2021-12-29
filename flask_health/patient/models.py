@@ -30,12 +30,10 @@ class Patient(Base):
 
         for attr, val in filters.items():
             if hasattr(MedicalCard, attr):  # i.e we have a blood_type
-                print(f'MedicalCard has {attr} attribute')
                 patients = patients.join(MedicalCard, Patient.id == MedicalCard.patient_id).filter(
                     getattr(MedicalCard, attr) == val)
 
             if hasattr(Patient, attr):  # i.e we have a gender
-                print(f'Patient has {attr} attribute')
                 patients = patients.filter(getattr(Patient, attr) == val)
 
         return patients.all()
