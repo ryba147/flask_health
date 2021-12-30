@@ -11,8 +11,10 @@ app.register_blueprint(patient_bp)
 app.register_blueprint(hospital_bp)
 app.register_blueprint(common_bp)
 
-# ???
 from flask_health.database import db_session
+from flask_health.database import init_db  # for docker to init database
+
+init_db()
 
 
 @app.teardown_appcontext
