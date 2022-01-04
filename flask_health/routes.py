@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, g, request
 
-from flask_health.logging import logger
+from flask_health.logging import logger  # rename logging.py to logger?
 
 common_bp = Blueprint('common_bp', __name__)
 

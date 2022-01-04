@@ -11,4 +11,5 @@ COPY . .
 
 ENV SQLALCHEMY_DATABASE_URI "postgresql://taras_docker:taras_docker@db:5432/flask_health_docker_db"
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+# CMD ["python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "wsgi:app"]

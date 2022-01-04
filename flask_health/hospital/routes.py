@@ -74,4 +74,4 @@ def delete_hospital(hospital_id):
 
     Hospital.delete(hospital)
 
-    return HTTPStatus.NO_CONTENT
+    return {}, HTTPStatus.NO_CONTENT
