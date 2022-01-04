@@ -3,3 +3,4 @@ marshmallow
 SQLAlchemy
 psycopg2-binary
 gunicorn
+alembic
